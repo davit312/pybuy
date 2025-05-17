@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+      <h3 class="text-center mb-4">Sign up</h3>
+      <form method="POST">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">username</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <div class="mb-3">
+          <label for="password2" class="form-label">Repeat password</label>
+          <input type="password" class="form-control" id="password2" name="password2" placeholder="Enter your password again" required>
+        </div>
+        <button type="Register" class="btn btn-primary w-100">Login</button>
+      </form>
+    </div>
+  </div>
+  {% endblock %}
