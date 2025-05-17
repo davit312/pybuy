@@ -1,0 +1,40 @@
+from flask_login import UserMixin
+from sqlalchemy.sql import func
+
+from . import db
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    username = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(180), nullable=False)
+    date_created = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now())
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image = db.Column(db.String(800))
+    price = db.Column(db.Float, nullable=False)
+    instock = db.Column(db.Integer, nullable=False)
+
+class Basket(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer, db.ForeignKey(
+        'user.id', ondelete="CASCADE"), nullable=False)
+    product = db.Column(db.Integer, db.ForeignKey(
+        'product.id', ondelete="CASCADE"), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+
+class OrderList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer, db.ForeignKey(
+        'user.id', ondelete="CASCADE"), nullable=False)
+    product = db.Column(db.Integer, db.ForeignKey(
+        'product.id', ondelete="CASCADE"), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    date_created = db.Column(db.DateTime(), nullable=False, default=func.now())
+    is_paid = db.Column(db.Boolean, default=False)
+    is_sent = db.Column(db.Boolean, default=False)
+    is_delivered = db.Column(db.Boolean, default=False)
