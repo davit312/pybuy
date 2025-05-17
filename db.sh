@@ -22,7 +22,10 @@ else
         -e MYSQL_DATABASE=shop \
         -e MYSQL_USER=shop \
         -e MYSQL_PASSWORD=shop \
+        -p 3306:3306 \
         -v $PWD/mysql:/var/lib/mysql \
         mysql:8.0.42-oracle
 fi
 
+# To connect to the MySQL server, use the following command:
+# mysql -hlocalhost -ushop -pshop -Dshop
