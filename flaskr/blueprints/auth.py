@@ -1,27 +1,33 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from ..models import User
 from .. import db
-from werkzeug.security import generate_password_hash
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            print("user found >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            if check_password_hash(user.password, password):
+                flash("Logged in!", category='success')
+                login_user(user, remember=True)
+                return redirect(url_for('shop.home'))
+        flash("Email or password is incorrect.", category='error')
+        return redirect(url_for('auth.login'))
     elif request.method == 'GET':
-        return render_template('pages/login.html')
-    
-    # Logic for handling login
-    return "Login Page"
+        return render_template('pages/login.html', user=current_user)
 
 @auth_bp.route('/logout')
 def logout():
-    # Logic for handling logout
-    return "Logout Page"
+    logout_user()
+    return redirect(url_for('shop.home'))
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -56,7 +62,7 @@ def signup():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('User created!')
-            return "Success"
+            return redirect(url_for('shop.home'))
 
     return render_template("pages/signup.html", user=current_user)
 
