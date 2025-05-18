@@ -28,4 +28,4 @@ else
 fi
 
 # To connect to the MySQL server, use the following command:
-# mysql -hlocalhost -ushop -pshop -Dshop
+# mysql -hlocalhost -ushop -pshop -Dshop --protocol tcp

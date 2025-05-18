@@ -30,6 +30,7 @@ def signup():
         username = request.form.get("username")
         password1 = request.form.get("password")
         password2 = request.form.get("password2")
+        is_admin = request.form.get("is_admin") == "on"
 
         email_exists = User.query.filter_by(email=email).first()
         username_exists = User.query.filter_by(username=username).first()
@@ -47,7 +48,10 @@ def signup():
         elif len(email) < 4:
             flash("Email is invalid.", category='error')
         else:
-            new_user = User(email=email, username=username, password=generate_password_hash(password1, method="scrypt"))
+            new_user = User(email=email,
+                             username=username,
+                             password=generate_password_hash(password1, method="scrypt"),
+                             is_admin=is_admin)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)

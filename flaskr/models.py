@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(180), nullable=False)
     date_created = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now())
+    is_admin = db.Column(db.Boolean, default=False)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +18,7 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(800))
     price = db.Column(db.Float, nullable=False)
-    instock = db.Column(db.Integer, nullable=False)
+    in_stock = db.Column(db.Integer, nullable=False)
 
 class Basket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
