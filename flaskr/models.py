@@ -14,9 +14,9 @@ class User(db.Model, UserMixin):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), nullable=False)
+    name = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    image = db.Column(db.String(800))
+    image = db.Column(db.String(40))
     price = db.Column(db.Float, nullable=False)
     in_stock = db.Column(db.Integer, nullable=False)
 
