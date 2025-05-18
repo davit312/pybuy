@@ -1,6 +1,10 @@
 # mysql db files
 mysql/
 
+# ignore uploaded files
+!flaskr/static/uploads/.gitkeep
+flaskr/static/uploads/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
