@@ -23,11 +23,20 @@
           {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{product.name}}</h5>
-            <p class="card-text">${{product.price}}</p>
+            <p class="card-text">
+              {{product.description}}<br />
+              <b>${{product.price}}</b>, 
+              <span style="color:orangered">{{product.in_stock}}</span> in stock
+            </p>
             <a href="#" class="btn btn-primary">Add to Cart</a>
           </div>
         </div>
       </div>
+      {% else %}
+      <div class="col-md-12">
+        <div class="alert alert-info text-center" role="alert">
+          No products available at the moment.
+        </div>
       {% endfor %}
     </div>
   </div>

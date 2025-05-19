@@ -12,6 +12,10 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/')
 @admin_bp.route('/product/new', methods=['GET', 'POST'])
 @login_required
 def new_product():
+    if not current_user.is_admin:
+        flash('You do not have permission to access that page.', 'error')
+        return redirect(url_for('shop.home'))
+
     if request.method == 'POST':
         product_name = request.form.get('name')
         product_price = request.form.get('price')
@@ -45,4 +49,53 @@ def new_product():
         flash('Product created successfully!', 'success')
         return redirect(url_for('admin.new_product'))
 
-    return render_template('pages/product-form.html', user=current_user)
+    return render_template('pages/product-form.html', user=current_user, product=None)
+
+
+@admin_bp.route('/product/edit/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_product(id):
+    if not current_user.is_admin:
+        flash('You do not have permission to access that page.', 'error')
+        return redirect(url_for('shop.home'))
+
+    product = Product.query.get(id)
+    if not product:
+        flash('Product not found!', 'error')
+        return redirect(url_for('shop.home'))
+
+    if request.method == 'POST':
+        product_name = request.form.get('name')
+        product_price = request.form.get('price')
+        product_in_stock = int(request.form.get('in_stock'))
+        product_description = request.form.get('description')
+        product_image = request.files.get('image')
+        update_image = request.form.get('update_image') == 'on'
+
+        if not product_name or not product_price or not product_description:
+            flash('All fields are required!', 'danger')
+            return redirect(url_for('shop.edit_product', id=id))
+        
+        if product_in_stock < 0:
+            flash('Product count is invalid', 'error')
+            return redirect(url_for('admin.edit_product', id=id))
+
+        if update_image:
+            if product_image and product_image.filename != '':
+                filename = str(time()).replace('.', '') + os.path.splitext(product_image.filename)[1]
+                product_image.save(os.path.join('flaskr/static/uploads', filename))
+            else:
+                filename = None
+            os.unlink(os.path.join('flaskr/static/uploads', product.image)) if product.image else None
+            product.image = filename
+
+        product.name = product_name
+        product.price = float(product_price)
+        product.in_stock = int(product_in_stock)
+        product.description = product_description
+
+        db.session.commit()
+
+        flash('Product updated successfully!', 'success')
+        return redirect(url_for('admin.edit_product', id=id))
+    return render_template('pages/product-form.html', user=current_user, product=product)

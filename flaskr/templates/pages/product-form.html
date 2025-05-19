@@ -3,24 +3,39 @@
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center">
 <div class="card p-4 shadow" style="width: 100%; max-width: 100vw;">
-  <h3 class="text-center mb-4">Add new product</h3>
+  <h3 class="text-center mb-4">{% if product %}Edit product{% else %}Add new product{% endif %}</h3>
   <form method="POST" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
-      <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" required>
+      <input type="text" class="form-control" id="name" name="name"
+      {% if product %}value="{{product.name}}"{% endif %}
+      placeholder="Enter product name" required>
     </div>
     <div class="mb-3">
       <label for="price" class="form-label">Price</label>
-      <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" placeholder="Enter price" required>
+      <input type="number" step="0.01" min="0" class="form-control" 
+      {% if product %}value="{{product.price}}"{% endif %}
+      id="price" name="price" placeholder="Enter price" required>
     </div>
     <div class="mb-3">
         <label for="in_stock" class="form-label">Count of items in stock</label>
-        <input type="number" min="0" class="form-control" id="in_stock" name="in_stock" placeholder="Count of items in stock" required>
+        <input type="number" min="0" class="form-control" 
+        {% if product %}value="{{product.in_stock}}"{% endif %}
+        id="in_stock" name="in_stock" placeholder="Count of items in stock" required>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
-      <textarea  class="form-control" id="description" name="description" rows="5" placeholder="Enter description" required></textarea>
+      <textarea  class="form-control"id="description" name="description" 
+      rows="5" placeholder="Enter description" required>{% if product %}{{product.description}}{% endif %}</textarea>
     </div>
+    {% if product %}
+    <div class="mb-3">
+      <input type="checkbox" class="form-check-input" id="update_image" name="update_image">
+      <label for="update_image" class="form-label">
+        Update current image (replace with new)<br />
+        <em>If checked, will delete existing image if nothing choosen</em></label>
+    </div>
+    {% endif %}
     <div class="mb-3">
       <label for="image" class="form-label">Image</label>
       <input type="file" accept="image/*" class="form-control" id="image" name="image">
