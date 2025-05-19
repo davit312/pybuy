@@ -11,7 +11,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000  # 16MB limit
-    app.config['UPLOAD_FOLDER'] = 'flaskr/static/uploads'
 
     from .blueprints.shop import shop_bp
     from .blueprints.auth import auth_bp
