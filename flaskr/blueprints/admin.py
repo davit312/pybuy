@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 import os.path
 from time import time
 
-from flaskr.models import Product
+from flaskr.models import Product, OrderList
 from flaskr import db
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/')
@@ -128,3 +128,13 @@ def dashboard():
         return redirect(url_for('shop.home'))
 
     return render_template('pages/admin.html', user=current_user, products=Product.query.all())
+
+@admin_bp.route('/admin/orders', methods=['GET'])
+@login_required
+def order_list():
+    if not current_user.is_admin:
+        flash('You do not have permission to access that page.', 'error')
+        return redirect(url_for('shop.home'))
+    
+    return render_template('pages/order_list.html', user=current_user, 
+                           orders=OrderList.query.filter_by(is_ordered=True))
