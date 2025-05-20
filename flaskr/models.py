@@ -20,20 +20,13 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     in_stock = db.Column(db.Integer, nullable=False)
 
-class Basket(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer, db.ForeignKey(
-        'user.id', ondelete="CASCADE"), nullable=False)
-    product = db.Column(db.Integer, db.ForeignKey(
-        'product.id', ondelete="CASCADE"), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-
 class OrderList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete="CASCADE"), nullable=False)
     product = db.Column(db.Integer, db.ForeignKey(
         'product.id', ondelete="CASCADE"), nullable=False)
+    is_ordered = db.Column(db.Boolean, default=False)
     quantity = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime(), nullable=False, default=func.now())
     is_paid = db.Column(db.Boolean, default=False)
