@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Dogoz shop{% endblock %}
+{% block content %}
+
+<!-- itarate over products, create table of them using bootstrap-->
+<div class="container">
+    <h1 class="text-center">Admin</h1>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link active" target="_blank" href="{{url_for('admin.new_product')}}">Add product</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Orders list</a>
+        </li>
+    </ul>
+    <h3>Products</h3>
+    <div class="table-responsive table-striped table-bordered table-hover">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>In stock</th>
+                    <th>Actions</th>
+                </tr>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td></td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.description[0:64]}}</td>
+                    <td>{{product.price}}</td>
+                    <td>{{product.in_stock}}</td>
+                    <td>
+                        <a href="{{url_for('admin.edit_product', id=product.id)}}" class="btn btn-primary">Edit</a>
+                        <button data-product="{{product.id}}" class="btn btn-danger delete-btn">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    // add event listener to all delete buttons
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+            let request = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: e.target.dataset.product
+                })
+            }
+
+            fetch('{{url_for("admin.delete_product")}}', request).then(function(response) {
+                if (response.ok) {
+                    // remove the row from the table
+                    e.target.closest('tr').remove();
+                } else {
+                    alert('Error deleting product');
+                }
+            }).catch(function(error) {
+                console.error('Error:', error);
+            })
+        })
+    })
+</script>
+{% endblock %}

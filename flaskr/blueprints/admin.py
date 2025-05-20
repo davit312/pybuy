@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, make_response,\
+                    flash, redirect, url_for
 from flask_login import login_required, current_user
 
 import os.path
@@ -97,5 +98,33 @@ def edit_product(id):
         db.session.commit()
 
         flash('Product updated successfully!', 'success')
-        return redirect(url_for('admin.edit_product', id=id))
+        return redirect(url_for('admin.dashboard', id=id))
     return render_template('pages/product-form.html', user=current_user, product=product)
+
+@admin_bp.route('/product/delete', methods=['POST'])
+@login_required
+def delete_product():
+    if not current_user.is_admin:
+        flash('You do not have permission to access that page.', 'error')
+        return redirect(url_for('shop.home'))
+
+    product_id = request.get_json().get('product_id')
+    product = Product.query.get(product_id)
+    if not product:
+        flash('Product not found!', 'error')
+        return make_response('Product not found!', 404)
+
+    db.session.delete(product)
+    db.session.commit()
+
+    flash('Product deleted successfully!', 'success')
+    return make_response('Product deleted successfully!', 200)
+
+@admin_bp.route('/admin/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    if not current_user.is_admin:
+        flash('You do not have permission to access that page.', 'error')
+        return redirect(url_for('shop.home'))
+
+    return render_template('pages/admin.html', user=current_user, products=Product.query.all())
