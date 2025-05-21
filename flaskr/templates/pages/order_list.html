@@ -17,20 +17,62 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Count</th>
+                    <th>Quantity</th>
                     <th>Pay status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                {% for order in orders %}
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{order.name}}</td>
+                    <td>{{order.quantity}}</td>
+                    <td>
+                        {% if order.is_paid %}
+                        <span class="badge bg-success">Paid</span>
+                        {% else %}
+                        <span class="badge bg-danger">Not paid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not order.is_sent %}
+                        <button onclick="sendOrder({{order.id}})" class="btn btn-primary">Send</button>
+                        {% else %}
+                            {% if order.is_delivered %}
+                            <span class="badge bg-success">Delivered</span>
+                            {% else %}
+                            <span class="badge bg-warning">Sent</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function sendOrder(orderId) {
+        fetch('/order/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "order_id": orderId })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text().then(text => {
+                    alert(text)
+                    if (response.ok) {
+                        location.reload()
+                    }
+                })
+            }
+        })
+    }
+</script>
 {% endblock %}

@@ -19,18 +19,15 @@ def user_orders():
 @order_bp.route('/order/submit', methods=['POST'])
 @login_required
 def submit_order():
-    print('Submitting order>>>>>>>>>>>>>>>>>>.')
-    print(8888888822)
 
     request_data = request.get_json()
-    print(111112222)
     order = db.session.query(OrderRecord).get(request_data['order_id'])
 
     if not order:
         return make_response('No items in basket', 400)
 
     if request_data.get('pay_now'):
-        order.is_payed = True
+        order.is_paid = True
 
     order.is_ordered = True
     db.session.add(order)
@@ -38,3 +35,19 @@ def submit_order():
 
     return make_response('Order submitted successfully', 200)
 
+
+
+@order_bp.route('/order/send', methods=['POST'])
+@login_required
+def send_order():
+
+    request_data = request.get_json()
+    order = db.session.query(OrderRecord).get(request_data['order_id'])
+
+    if not order:
+        return make_response('No items in basket', 400)
+
+    order.is_sent = True
+    db.session.add(order)
+    db.session.commit()
+    return make_response('Order sent successfully', 200)
