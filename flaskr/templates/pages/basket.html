@@ -3,21 +3,13 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center">My basket</h1>
-    <ul class="nav">
-        <li class="nav-item">
-            <a class="nav-link active" target="_blank" href="{{url_for('admin.new_product')}}">Add product</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Selected items</a>
-        </li>
-    </ul>
     <h3>Pre orders</h3>
     <div class="table-responsive table-striped table-bordered table-hover">
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <tr>Count</tr>
+                    <th>Count</th>
                     <th>Actions</th>
                 </tr>
             </thead>

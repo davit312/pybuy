@@ -28,7 +28,11 @@
               <b>${{product.price}}</b>, 
               <span style="color:orangered">{{product.in_stock}}</span> in stock
             </p>
-            <a href="#" class="btn btn-primary">Add to Cart</a>
+            {% if user.is_authenticated and not user.is_admin %}
+            <button class="btn btn-primary" onclick="addToBasket('{{product.id}}')">Add to Basket</button>
+            {% elif user.is_authenticated and user.is_admin %}
+            <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-warning">Edit</a>
+            {% endif %}  
           </div>
         </div>
       </div>
@@ -40,4 +44,24 @@
       {% endfor %}
     </div>
   </div>
+{% endblock %}
+{% block js %}
+<script>
+  function addToBasket(productId) {
+    fetch(`/basket/put/${productId}/1`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Product added to basket!');
+      } else {
+        alert('Failed to add product to basket.');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+</script>
 {% endblock %}

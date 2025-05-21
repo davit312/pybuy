@@ -12,7 +12,7 @@ def home():
     return render_template('pages/index.html', user=current_user, products=products)
 
 
-@shop_bp.route('/basket/put/<int:product_id>/<int:quantity>', methods=['GET'])
+@shop_bp.route('/basket/put/<int:product_id>/<int:quantity>', methods=['POST'])
 @login_required
 def put_to_basket(product_id, quantity):
     product = db.session.query(Product).get(product_id)
