@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 import os.path
 from time import time
 
-from flaskr.models import Product, OrderList
+from flaskr.models import Product, OrderRecord
 from flaskr import db
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/')
@@ -137,4 +137,4 @@ def order_list():
         return redirect(url_for('shop.home'))
     
     return render_template('pages/order_list.html', user=current_user, 
-                           orders=OrderList.query.filter_by(is_ordered=True))
+                           orders=OrderRecord.query.filter_by(is_ordered=True))

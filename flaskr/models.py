@@ -20,11 +20,11 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     in_stock = db.Column(db.Integer, nullable=False)
 
-class OrderList(db.Model):
+class OrderRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer, db.ForeignKey(
+    user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete="CASCADE"), nullable=False)
-    product = db.Column(db.Integer, db.ForeignKey(
+    product_id = db.Column(db.Integer, db.ForeignKey(
         'product.id', ondelete="CASCADE"), nullable=False)
     is_ordered = db.Column(db.Boolean, default=False)
     quantity = db.Column(db.Integer, nullable=False)
@@ -32,3 +32,4 @@ class OrderList(db.Model):
     is_paid = db.Column(db.Boolean, default=False)
     is_sent = db.Column(db.Boolean, default=False)
     is_delivered = db.Column(db.Boolean, default=False)
+    product = db.relationship('Product', backref='OrderRecord', passive_deletes=True)
