@@ -15,10 +15,12 @@ def create_app():
     from .blueprints.shop import shop_bp
     from .blueprints.auth import auth_bp
     from .blueprints.admin import admin_bp
+    from .blueprints.order import order_bp
 
     app.register_blueprint(shop_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(order_bp)
 
     db.init_app(app)
     from .models import User

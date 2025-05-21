@@ -12,47 +12,74 @@ def home():
     return render_template('pages/index.html', user=current_user, products=products)
 
 
-@shop_bp.route('/basket/put/<int:product_id>/<int:quantity>', methods=['POST'])
+@shop_bp.route('/basket/add/<int:product_id>/<int:quantity>', methods=['POST'])
 @login_required
-def put_to_basket(product_id, quantity):
-    product = db.session.query(Product).get(product_id)
+def add_to_basket(product_id, quantity):
+    product = db.session.query(Product).filter_by(id=product_id).first()
+
+    stock_quantity = product.in_stock 
     if product:
-        new_stock_quantity = product.in_stock - quantity
-        if new_stock_quantity >= 0:
-            product.in_stock = new_stock_quantity
-            existing_order = db.session.query(OrderRecord).filter_by(
-                user_id=current_user.id,
-                product_id=product.id,
-                is_ordered=False
-            ).first()
-            if existing_order:
-                order = existing_order
-            else:
-                order = OrderRecord(
-                    user_id=current_user.id,
-                    product_id=product.id,
-                    quantity=quantity,
-                    is_ordered=False
-                )
-            db.session.add(order)
-            db.session.commit()
-        else:
-            return make_response('Product out of stock', 400)
+        existing_order = db.session.query(OrderRecord).filter_by(
+            user_id=current_user.id,
+            product_id=product.id,
+            is_ordered=False
+        ).first()
+        if existing_order is not None:
+            return make_response('Product already in basket', 400)
+        order = OrderRecord(
+            user_id=current_user.id,
+            product_id=product.id,
+            quantity=quantity,
+            is_ordered=False
+        )
+        new_stock_quantity = stock_quantity - quantity
+
+        if new_stock_quantity < 0:
+            return make_response('Not enough stock', 400)
+
+        product.in_stock = new_stock_quantity
+
+        db.session.add(order)
+        db.session.add(product)
+
+        db.session.commit()
+
     return make_response('Product added to basket', 200)
 
-@shop_bp.route('/basket/delete/<int:product_id>', methods=['GET'])
-@login_required
-def remove_from_basket(product_id, quantity):
-    order = db.session.query(OrderRecord).filter_by(
-        user_id=current_user.id,
-        product_id=product_id,
-        is_ordered=False
-    )
-    product = db.session.query(Product).get(product_id)
-    product.in_stock += quantity
 
-    if not order:
-        return make_response('Product not in basket', 400)
+
+
+@shop_bp.route('/basket/update/<int:order_id>/<int:quantity>', methods=['POST'])
+@login_required
+def update_basket_item(order_id, quantity):
+    order = db.session.query(OrderRecord).filter_by(id=order_id).first()
+    product = db.session.query(Product).filter_by(id=order.product_id).first()
+    if quantity <= 0:
+        return make_response('Invalid quantity', 400)
+
+    new_stock_quantity = (product.in_stock + order.quantity) - quantity
+
+    if new_stock_quantity < 0:
+        return make_response('Not enough stock', 400)
+
+    product.in_stock = new_stock_quantity
+    order.quantity = quantity
+
+    db.session.add(order)
+    db.session.add(product)
+
+    db.session.commit()
+
+    return make_response('Basket item updated', 200)
+
+@shop_bp.route('/basket/delete/<int:order_id>', methods=['POST'])
+@login_required
+def remove_from_basket(order_id):
+    order = db.session.query(OrderRecord).get(order_id)
+    product = db.session.query(Product).get(order.product_id)
+
+    product.in_stock += order.quantity
+    db.session.add(product)
 
     db.session.delete(order)
     db.session.commit()
@@ -67,13 +94,3 @@ def basket():
     ).all()
 
     return render_template('pages/basket.html', user=current_user, items=items)
-
-@shop_bp.route('/orders')
-@login_required
-def user_orders():
-    items = db.session.query(OrderRecord).filter_by(
-        user_id=current_user.id,
-        is_ordered=True
-    ).all()
-
-    return render_template('pages/user_orders.html', user=current_user, items=items)

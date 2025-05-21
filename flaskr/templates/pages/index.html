@@ -48,7 +48,7 @@
 {% block js %}
 <script>
   function addToBasket(productId) {
-    fetch(`/basket/put/${productId}/1`, {
+    fetch(`/basket/add/${productId}/1`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,9 @@
       if (response.ok) {
         alert('Product added to basket!');
       } else {
-        alert('Failed to add product to basket.');
+        response.text().then(data => {
+          alert(data);
+        })
       }
     })
     .catch(error => console.error('Error:', error));
