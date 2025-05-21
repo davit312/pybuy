@@ -68,3 +68,12 @@ def basket():
 
     return render_template('pages/basket.html', user=current_user, items=items)
 
+@shop_bp.route('/orders')
+@login_required
+def user_orders():
+    items = db.session.query(OrderRecord).filter_by(
+        user_id=current_user.id,
+        is_ordered=True
+    ).all()
+
+    return render_template('pages/user_orders.html', user=current_user, items=items)
