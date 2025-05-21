@@ -25,7 +25,7 @@
             <tbody>
                 {% for order in orders %}
                 <tr>
-                    <td>{{order.name}}</td>
+                    <td>{{order.product.name}}</td>
                     <td>{{order.quantity}}</td>
                     <td>
                         {% if order.is_paid %}

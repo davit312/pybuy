@@ -46,9 +46,6 @@ def add_to_basket(product_id, quantity):
 
     return make_response('Product added to basket', 200)
 
-
-
-
 @shop_bp.route('/basket/update/<int:order_id>/<int:quantity>', methods=['POST'])
 @login_required
 def update_basket_item(order_id, quantity):
