@@ -23,6 +23,7 @@ else
         -e MYSQL_USER=shop \
         -e MYSQL_PASSWORD=shop \
         -p 3306:3306 \
+	--restart unless-stopped \
         -v $PWD/mysql:/var/lib/mysql \
         mysql:8.0.42-oracle
 fi
